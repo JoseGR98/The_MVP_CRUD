@@ -8,6 +8,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.luigidev.themvpcrud.R
 import com.luigidev.themvpcrud.databinding.FragmentManageProductBinding
 import com.luigidev.themvpcrud.features.home.domain.models.Product
@@ -74,10 +75,11 @@ class ManageProductFragment : Fragment(), IManageProductView {
     }
 
     override fun showUploadSuccess() {
-        TODO("Not yet implemented")
+        Toast.makeText(requireContext(), "Product Saved", Toast.LENGTH_SHORT).show()
+        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
     override fun showUploadError() {
-        TODO("Not yet implemented")
+        Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
     }
 }

@@ -6,7 +6,5 @@ import com.luigidev.themvpcrud.features.home.domain.models.Product
 import com.luigidev.themvpcrud.features.manageproduct.domain.repository.IManageProductRepository
 
 class ManageProductRepositoryImp: IManageProductRepository {
-    override fun saveProduct(context: Context, product: Product) {
-        DatabaseHelper(context).insertProduct(product)
-    }
+    override fun saveProduct(context: Context, product: Product) = DatabaseHelper(context).insertProduct(product)
 }

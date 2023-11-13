@@ -33,7 +33,7 @@ class DatabaseHelper(context: Context) :
         // Handle database schema upgrades
     }
 
-    fun insertProduct(product: Product): Long {
+    fun insertProduct(product: Product): ResultDatabase {
         val contentValues = ContentValues().apply {
             put(COLUMN_NAME, product.name)
             put(COLUMN_DESCRIPTION, product.description)
@@ -43,7 +43,7 @@ class DatabaseHelper(context: Context) :
         val writableDatabase = getWritableDatabase("your_secret_passphrase")
         val insertedProductId = writableDatabase.insert(TABLE_NAME, null, contentValues)
         writableDatabase.close()
-        return insertedProductId
+        return ResultDatabase.Success(insertedProductId.toString())
     }
 
     @SuppressLint("Range")
