@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity(), IHomeView {
             goToManageProduct()
         }
 
-        presenter.loadProducts()
+        presenter.loadProducts(this)
     }
 
     override fun showProducts(products: List<Product>) {
@@ -43,27 +43,4 @@ class MainActivity : AppCompatActivity(), IHomeView {
         hideFab(false)
     }
 
-    //    private fun goToManageProduct(id: String? = null){
-//        val fragment = ManageProductFragment()
-//        val transaction = supportFragmentManager.beginTransaction()
-//        transaction.replace(R.id.fragmentContainer, fragment)
-//        transaction.addToBackStack(null)
-//        transaction.commit()
-//
-//        hideFab(false)
-//    }
-
-//    override fun goToManageProduct() {
-//        val fragment = ManageProductFragment()
-//        val transaction = supportFragmentManager.beginTransaction()
-//        transaction.replace(R.id.fragmentContainer, fragment)
-//        transaction.addToBackStack(null)
-//        transaction.commit()
-//
-//        view.hideFab(false)
-//    }
-
-//    override fun hideFab(isVisible: Boolean) {
-//        if (isVisible) mBinding.fab.show() else mBinding.fab.hide()
-//    }
 }

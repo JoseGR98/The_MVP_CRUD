@@ -60,12 +60,12 @@ class ManageProductFragment : Fragment(), IManageProductView {
             R.id.action_save -> {
 
                val product = Product(
-                    id = "1",
+                    id = 1,
                     name = mBinding.etName.text.toString().trim(),
                     description = mBinding.etDescription.text.toString().trim(),
                     price = mBinding.etPrice.text.toString().trim().toInt()
                 )
-                presenter.saveProduct(product)
+                presenter.saveProduct(requireContext(), product)
                 true
             }
 
