@@ -6,4 +6,6 @@
     <string name="hint_description">Description</string>
     <string name="hint_price">Price</string>
     <string name="action_title_save">Save</string>
+    <string name="arg_id">key_id</string>
+    <string name="btn_edit">Edit</string>
 </resources>

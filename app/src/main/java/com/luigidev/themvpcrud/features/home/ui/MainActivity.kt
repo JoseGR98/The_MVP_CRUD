@@ -3,11 +3,12 @@ package com.luigidev.themvpcrud.features.home.ui
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.luigidev.themvpcrud.features.manageproduct.ui.ManageProductFragment
 import com.luigidev.themvpcrud.R
 import com.luigidev.themvpcrud.databinding.ActivityMainBinding
 import com.luigidev.themvpcrud.features.home.domain.contracts.IHomeView
-import com.luigidev.themvpcrud.features.home.domain.models.Product
+import com.luigidev.themvpcrud.core.Product
 
 class MainActivity : AppCompatActivity(), IHomeView {
 
@@ -27,6 +28,8 @@ class MainActivity : AppCompatActivity(), IHomeView {
 
     override fun showProducts(products: List<Product>) {
         Log.i("View", "PRoducts $products")
+        mBinding.recyclerView.adapter = ProductsAdapter(products, this::goToEditProduct)
+        mBinding.recyclerView.layoutManager = LinearLayoutManager(this)
     }
 
     override fun hideFab(isVisible: Boolean) {
@@ -41,6 +44,19 @@ class MainActivity : AppCompatActivity(), IHomeView {
         transaction.commit()
 
         hideFab(false)
+    }
+
+    override fun goToEditProduct(id: Long) {
+        Log.i("View", "Id to edit $id")
+        val args = Bundle()
+        args.putLong(getString(R.string.arg_id), id)
+        val fragment = ManageProductFragment()
+        fragment.arguments = args
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.add(R.id.fragmentContainer, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
+
     }
 
 }

@@ -3,9 +3,9 @@ package com.luigidev.themvpcrud.core
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
-import com.luigidev.themvpcrud.features.home.domain.models.Product
 import net.sqlcipher.database.SQLiteDatabase
 import net.sqlcipher.database.SQLiteOpenHelper
+import net.sqlcipher.Cursor
 
 
 class DatabaseHelper(context: Context) :
@@ -17,6 +17,7 @@ class DatabaseHelper(context: Context) :
         private const val COLUMN_NAME = "name"
         private const val COLUMN_DESCRIPTION = "description"
         private const val COLUMN_PRICE = "price"
+        private const val PASSWORD = "your_secret_passphrase"
     }
 
     init {
@@ -33,14 +34,14 @@ class DatabaseHelper(context: Context) :
         // Handle database schema upgrades
     }
 
-    fun insertProduct(product: Product): ResultDatabase {
+    fun insertProduct(product: Product): ResultDatabase<String> {
         val contentValues = ContentValues().apply {
             put(COLUMN_NAME, product.name)
             put(COLUMN_DESCRIPTION, product.description)
             put(COLUMN_PRICE, product.price)
         }
 
-        val writableDatabase = getWritableDatabase("your_secret_passphrase")
+        val writableDatabase = getWritableDatabase(PASSWORD)
         val insertedProductId = writableDatabase.insert(TABLE_NAME, null, contentValues)
         writableDatabase.close()
         return ResultDatabase.Success(insertedProductId.toString())
@@ -52,11 +53,11 @@ class DatabaseHelper(context: Context) :
         val query = "SELECT * FROM $TABLE_NAME"
 
         val readableDatabase =
-            getReadableDatabase("your_secret_passphrase")
-        val cursor: net.sqlcipher.Cursor = readableDatabase.rawQuery(query, null)
+            getReadableDatabase(PASSWORD)
+        val cursor: Cursor = readableDatabase.rawQuery(query, null)
 
         while (cursor.moveToNext()) {
-            val id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID))
+            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
             val name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME))
             val description = cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION))
             val price = cursor.getInt(cursor.getColumnIndex(COLUMN_PRICE))
@@ -70,6 +71,34 @@ class DatabaseHelper(context: Context) :
         return products
     }
 
+    @SuppressLint("Range")
+    fun getProductById(productId: Long): ResultDatabase<Product> {
+        val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = ?"
+        val database = getReadableDatabase(PASSWORD)
+
+        val cursor: Cursor = database.rawQuery(query, arrayOf(productId.toString()))
+
+        var product: Product? = null
+
+        if (cursor.moveToFirst()) {
+            val id = cursor.getLong(cursor.getColumnIndex(COLUMN_ID))
+            val name = cursor.getString(cursor.getColumnIndex(COLUMN_NAME))
+            val description = cursor.getString(cursor.getColumnIndex(COLUMN_DESCRIPTION))
+            val price = cursor.getInt(cursor.getColumnIndex(COLUMN_PRICE))
+
+            product = Product(id, name, description, price)
+        }
+
+        cursor.close()
+        database.close()
+        return if (product != null){
+            ResultDatabase.Success(product)
+        } else {
+            ResultDatabase.Error
+        }
+    }
+
+    //Method to development mode
     fun deleteDatabase(context: Context) {
         context.deleteDatabase("encrypted_database.db")
     }

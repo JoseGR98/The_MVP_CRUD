@@ -1,6 +1,7 @@
 package com.luigidev.themvpcrud.features.manageproduct.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -11,7 +12,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.luigidev.themvpcrud.R
 import com.luigidev.themvpcrud.databinding.FragmentManageProductBinding
-import com.luigidev.themvpcrud.features.home.domain.models.Product
+import com.luigidev.themvpcrud.core.Product
+import com.luigidev.themvpcrud.core.editable
 import com.luigidev.themvpcrud.features.home.ui.MainActivity
 import com.luigidev.themvpcrud.features.manageproduct.domain.contracts.IManageProductView
 
@@ -19,6 +21,7 @@ class ManageProductFragment : Fragment(), IManageProductView {
 
     private lateinit var mBinding: FragmentManageProductBinding
     private var mActivity: MainActivity? = null
+    private var isEditMode: Boolean = false
 
     private val presenter = ManageProductPresenter(this)
 
@@ -32,6 +35,16 @@ class ManageProductFragment : Fragment(), IManageProductView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val id = arguments?.getLong(getString(R.string.arg_id), 0L)
+        Log.i("VIEW", "id as argument $id")
+        if (id != null && id != 0L) {
+            isEditMode = true
+            Log.i("View", "Id in manage product $id")
+            presenter.editProduct(requireContext(), id)
+        } else {
+            //Manage edit mode
+        }
+
         mActivity = activity as? MainActivity
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         mActivity?.supportActionBar?.title = "Create a product"
@@ -59,14 +72,17 @@ class ManageProductFragment : Fragment(), IManageProductView {
             }
 
             R.id.action_save -> {
-
-               val product = Product(
-                    id = 1,
-                    name = mBinding.etName.text.toString().trim(),
-                    description = mBinding.etDescription.text.toString().trim(),
-                    price = mBinding.etPrice.text.toString().trim().toInt()
-                )
-                presenter.saveProduct(requireContext(), product)
+                if (isEditMode) {
+                    //Manage the edit mode
+                } else {
+                    val product = Product(
+                        id = 1,
+                        name = mBinding.etName.text.toString().trim(),
+                        description = mBinding.etDescription.text.toString().trim(),
+                        price = mBinding.etPrice.text.toString().trim().toInt()
+                    )
+                    presenter.saveProduct(requireContext(), product)
+                }
                 true
             }
 
@@ -82,4 +98,14 @@ class ManageProductFragment : Fragment(), IManageProductView {
     override fun showUploadError() {
         Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
     }
+
+    override fun showEditMode(product: Product) {
+        with(mBinding) {
+            etName.text = product.name.editable()
+            etDescription.text = product.description.editable()
+            etPrice.text = product.price.toString().editable()
+        }
+
+    }
+
 }

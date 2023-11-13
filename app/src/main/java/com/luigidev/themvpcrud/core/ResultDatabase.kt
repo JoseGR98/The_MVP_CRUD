@@ -1,6 +1,6 @@
 package com.luigidev.themvpcrud.core
 
-sealed class ResultDatabase{
-    data class Success(val data: String): ResultDatabase()
-    object Error: ResultDatabase()
+sealed class ResultDatabase<out T>{
+    data class Success<out T>(val data: T): ResultDatabase<T>()
+    object Error: ResultDatabase<Nothing>()
 }
