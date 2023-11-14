@@ -5,6 +5,7 @@ import com.luigidev.themvpcrud.core.DatabaseHelper
 import com.luigidev.themvpcrud.core.Product
 import com.luigidev.themvpcrud.features.home.domain.repository.IHomeRepository
 
-class HomeRepositoryImp() : IHomeRepository {
-    override fun getProducts(context: Context): List<Product> = DatabaseHelper(context).getProducts()
+class HomeRepositoryImp : IHomeRepository {
+    override fun getProducts(context: Context): List<Product> =
+        DatabaseHelper(context).getProducts()
 }

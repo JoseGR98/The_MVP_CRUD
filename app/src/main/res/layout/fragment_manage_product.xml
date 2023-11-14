@@ -20,7 +20,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/hint_name"
             app:helperText="Required"
-            app:startIconDrawable="@drawable/ic_product">
+            app:startIconDrawable="@drawable/ic_product"
+            app:helperTextTextAppearance="@style/HelperTextStyle">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etName"

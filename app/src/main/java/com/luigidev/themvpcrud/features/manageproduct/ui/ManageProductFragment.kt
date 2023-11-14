@@ -2,7 +2,6 @@ package com.luigidev.themvpcrud.features.manageproduct.ui
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,10 +9,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import com.luigidev.themvpcrud.R
-import com.luigidev.themvpcrud.databinding.FragmentManageProductBinding
 import com.luigidev.themvpcrud.core.Product
 import com.luigidev.themvpcrud.core.editable
+import com.luigidev.themvpcrud.databinding.FragmentManageProductBinding
 import com.luigidev.themvpcrud.features.home.ui.MainActivity
 import com.luigidev.themvpcrud.features.manageproduct.domain.contracts.IManageProductView
 
@@ -36,19 +36,23 @@ class ManageProductFragment : Fragment(), IManageProductView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = arguments?.getLong(getString(R.string.arg_id), 0L)
-        Log.i("VIEW", "id as argument $id")
-        if (id != null && id != 0L) {
-            isEditMode = true
-            Log.i("View", "Id in manage product $id")
-            presenter.editProduct(requireContext(), id)
-        } else {
-            //Manage edit mode
-        }
-
         mActivity = activity as? MainActivity
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        mActivity?.supportActionBar?.title = "Create a product"
         setHasOptionsMenu(true)
+        Log.i("VIEW", "id as argument $id")
+
+        if (id != null && id != 0L) {
+            //When clicking on "Edit" Product button
+            isEditMode = true
+            mActivity?.supportActionBar?.title = "Edit the product"
+            Log.i("View", "Id in manage product $id")
+            presenter.readProduct(requireContext(), id)
+        } else {
+            //When clicking on New "+" FAB Product
+            isEditMode = false
+            mActivity?.supportActionBar?.title = "Create a product"
+            Log.i("View", "Manage edit mode")
+        }
     }
 
     override fun onDestroy() {
@@ -72,20 +76,32 @@ class ManageProductFragment : Fragment(), IManageProductView {
             }
 
             R.id.action_save -> {
+                val name = mBinding.etName.text.toString().trim()
+                val description = mBinding.etDescription.text.toString().trim()
+                val price = mBinding.etPrice.text.toString().trim().toInt()
+
+                val product = Product(
+                    id = 1,
+                    name = name,
+                    description = description,
+                    price = price
+                )
+
                 if (isEditMode) {
-                    //Manage the edit mode
-                } else {
-                    val product = Product(
-                        id = 1,
-                        name = mBinding.etName.text.toString().trim(),
-                        description = mBinding.etDescription.text.toString().trim(),
-                        price = mBinding.etPrice.text.toString().trim().toInt()
+                    //U - Register update
+                    presenter.editProduct(
+                        context = requireContext(),
+                        product = product
                     )
-                    presenter.saveProduct(requireContext(), product)
+                } else {
+                    //C - Register creation
+                    presenter.saveProduct(
+                        context = requireContext(),
+                        product = product
+                    )
                 }
                 true
             }
-
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -105,7 +121,6 @@ class ManageProductFragment : Fragment(), IManageProductView {
             etDescription.text = product.description.editable()
             etPrice.text = product.price.toString().editable()
         }
-
     }
 
 }

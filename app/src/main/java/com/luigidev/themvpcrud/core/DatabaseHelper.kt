@@ -3,12 +3,11 @@ package com.luigidev.themvpcrud.core
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import net.sqlcipher.Cursor
 import net.sqlcipher.database.SQLiteDatabase
 import net.sqlcipher.database.SQLiteOpenHelper
-import net.sqlcipher.Cursor
 
-
-class DatabaseHelper(context: Context) :
+open class DatabaseHelper(context: Context) :
     SQLiteOpenHelper(context, "encrypted_database.db", null, 1) {
 
     companion object {
@@ -24,16 +23,14 @@ class DatabaseHelper(context: Context) :
         SQLiteDatabase.loadLibs(context)
     }
 
+    //CREATE DATABASE
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQuery =
             "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_NAME TEXT, $COLUMN_DESCRIPTION TEXT, $COLUMN_PRICE INTEGER)"
         db?.execSQL(createTableQuery)
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        // Handle database schema upgrades
-    }
-
+    //CREATE REGISTER
     fun insertProduct(product: Product): ResultDatabase<String> {
         val contentValues = ContentValues().apply {
             put(COLUMN_NAME, product.name)
@@ -47,6 +44,7 @@ class DatabaseHelper(context: Context) :
         return ResultDatabase.Success(insertedProductId.toString())
     }
 
+    //READ TABLE
     @SuppressLint("Range")
     fun getProducts(): List<Product> {
         val products = mutableListOf<Product>()
@@ -71,6 +69,7 @@ class DatabaseHelper(context: Context) :
         return products
     }
 
+    //READ REGISTER
     @SuppressLint("Range")
     fun getProductById(productId: Long): ResultDatabase<Product> {
         val query = "SELECT * FROM $TABLE_NAME WHERE $COLUMN_ID = ?"
@@ -91,14 +90,42 @@ class DatabaseHelper(context: Context) :
 
         cursor.close()
         database.close()
-        return if (product != null){
+        return if (product != null) {
             ResultDatabase.Success(product)
         } else {
             ResultDatabase.Error
         }
     }
 
-    //Method to development mode
+    //UPDATE REGISTER
+    fun updateProduct(product: Product): ResultDatabase<String> {
+        val updatedValues = ContentValues().apply {
+            put(COLUMN_NAME, product.name)
+            put(COLUMN_DESCRIPTION, product.description)
+            put(COLUMN_PRICE, product.price)
+        }
+        val writableDatabase = getWritableDatabase(PASSWORD)
+        val updatedProduct = writableDatabase.update(
+            TABLE_NAME,
+            updatedValues,
+            "$COLUMN_ID=?",
+            arrayOf(product.id.toString())
+        )
+        writableDatabase.close()
+        return ResultDatabase.Success(updatedProduct.toString())
+    }
+
+    //UPDATE TABLE
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        //Not required at the moment
+    }
+
+    //DELETE PRODUCT
+    fun deleteRegister() {
+        // * TODO * //
+    }
+
+    //DEVELOPMENT FUNCTION MODE
     fun deleteDatabase(context: Context) {
         context.deleteDatabase("encrypted_database.db")
     }

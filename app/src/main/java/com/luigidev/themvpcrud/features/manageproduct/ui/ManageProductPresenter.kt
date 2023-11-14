@@ -12,16 +12,24 @@ class ManageProductPresenter(private val view: IManageProductView): IManageProdu
     private val repository = ManageProductRepositoryImp()
 
     override fun saveProduct(context: Context, product: Product) {
-        when(repository.saveProduct(context, product)){
+        when(repository.createProduct(context, product)){
             ResultDatabase.Error -> view.showUploadError()
             is ResultDatabase.Success -> view.showUploadSuccess()
         }
     }
 
-    override fun editProduct(context: Context, id: Long) {
-        when(val result = repository.getProduct(context, id)){
-            ResultDatabase.Error -> view.showUploadError()// Temporal error
+    override fun readProduct(context: Context, id: Long) {
+        when(val result = repository.readProduct(context, id)){
+            ResultDatabase.Error -> view.showUploadError()
             is ResultDatabase.Success -> view.showEditMode(result.data)
         }
     }
+
+    override fun editProduct(context: Context, product: Product) {
+        when(repository.updateProduct(context, product)){
+            ResultDatabase.Error -> view.showUploadError()
+            is ResultDatabase.Success -> view.showUploadSuccess()
+        }
+    }
+
 }

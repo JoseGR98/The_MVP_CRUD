@@ -1,5 +1,6 @@
 package com.luigidev.themvpcrud.features.home.ui
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,20 +18,20 @@ class ProductsAdapter(private val products: List<Product>, private val onClick: 
         return ProductViewHolder(mBinding.root)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val data = products[position]
         with(mBinding) {
-//            root.setOnClickListener {
-//                onClick(data.id.toString())
-//            }
             btnEdit.setOnClickListener {
                 onClick(data.id)
             }
-            tvNameProduct.text = data.name
+            tvProductName.text = data.name
+            tvProductDescription.text = data.description
+            tvProductPrice.text= "$ ${data.price}"
         }
     }
 
     override fun getItemCount(): Int = products.size
 
-    inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {}
+    inner class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }
