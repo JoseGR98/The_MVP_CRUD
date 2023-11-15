@@ -8,7 +8,9 @@ import com.luigidev.themvpcrud.core.Product
 import com.luigidev.themvpcrud.databinding.ActivityMainBinding
 import com.luigidev.themvpcrud.features.home.domain.contracts.IHomeView
 import com.luigidev.themvpcrud.features.manageproduct.ui.ManageProductFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), IHomeView {
 
     private lateinit var mBinding: ActivityMainBinding

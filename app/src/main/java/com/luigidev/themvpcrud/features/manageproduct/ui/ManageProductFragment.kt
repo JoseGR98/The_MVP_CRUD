@@ -16,7 +16,9 @@ import com.luigidev.themvpcrud.core.editable
 import com.luigidev.themvpcrud.databinding.FragmentManageProductBinding
 import com.luigidev.themvpcrud.features.home.ui.MainActivity
 import com.luigidev.themvpcrud.features.manageproduct.domain.contracts.IManageProductView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ManageProductFragment : Fragment(), IManageProductView {
 
     private lateinit var mBinding: FragmentManageProductBinding
