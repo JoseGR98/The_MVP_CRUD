@@ -1,7 +1,6 @@
 package com.luigidev.themvpcrud.features.manageproduct.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -9,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.luigidev.themvpcrud.R
 import com.luigidev.themvpcrud.core.Product
@@ -39,28 +39,30 @@ class ManageProductFragment : Fragment(), IManageProductView {
         mActivity = activity as? MainActivity
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
-        Log.i("VIEW", "id as argument $id")
 
-        if (id != null && id != 0L) {
-            //When clicking on "Edit" Product button
+        if (id != null && id != 0L) {//When clicking on "Edit" Product button
             isEditMode = true
-            mActivity?.supportActionBar?.title = "Edit the product"
-            Log.i("View", "Id in manage product $id")
-            presenter.readProduct(requireContext(), id)
-        } else {
-            //When clicking on New "+" FAB Product
+            mActivity?.supportActionBar?.title = getString(R.string.sab_title_edit)
+            mBinding.btnDelete.isVisible = true
+            presenter.getProduct(requireContext(), id)
+        } else {  //When clicking on New "+" FAB Product
             isEditMode = false
-            mActivity?.supportActionBar?.title = "Create a product"
-            Log.i("View", "Manage edit mode")
+            mActivity?.supportActionBar?.title = getString(R.string.sab_title_create)
+            mBinding.btnDelete.isVisible = false
+        }
+
+        mBinding.btnDelete.setOnClickListener {
+            onDeleteButtonClick()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         mActivity?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        mActivity?.supportActionBar?.title = "Products"
+        mActivity?.supportActionBar?.title = getString(R.string.sab_title_menu)
         mActivity?.hideFab(true)
         setHasOptionsMenu(false)
+        (activity as MainActivity?)?.loadProducts()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -76,51 +78,64 @@ class ManageProductFragment : Fragment(), IManageProductView {
             }
 
             R.id.action_save -> {
-                val name = mBinding.etName.text.toString().trim()
-                val description = mBinding.etDescription.text.toString().trim()
-                val price = mBinding.etPrice.text.toString().trim().toInt()
+                val name = mBinding.etProductName.text.toString().trim()
+                val description = mBinding.etProductDescription.text.toString().trim()
+                val price = mBinding.etProductPrice.text.toString().trim()
 
-                val product = Product(
-                    id = 1,
-                    name = name,
-                    description = description,
-                    price = price
-                )
-
-                if (isEditMode) {
-                    //U - Register update
-                    presenter.editProduct(
-                        context = requireContext(),
-                        product = product
-                    )
+                if (!presenter.validateStrings(name, description, price)) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.fill_form),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    false
                 } else {
-                    //C - Register creation
-                    presenter.saveProduct(
-                        context = requireContext(),
-                        product = product
+                    val newProduct = Product(
+                        name = name,
+                        description = description,
+                        price = price.toInt()
                     )
+                    if (isEditMode) { //U - Register update
+                        presenter.modifyProduct(
+                            context = requireContext(),
+                            product = newProduct
+                        )
+                    } else { //C - Register creation
+                        presenter.saveProduct(
+                            context = requireContext(),
+                            product = newProduct
+                        )
+                    }
+                    true
                 }
-                true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun showUploadSuccess() {
-        Toast.makeText(requireContext(), "Product Saved", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.success), Toast.LENGTH_SHORT).show()
         requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
     override fun showUploadError() {
-        Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), getString(R.string.error), Toast.LENGTH_SHORT).show()
     }
 
     override fun showEditMode(product: Product) {
         with(mBinding) {
-            etName.text = product.name.editable()
-            etDescription.text = product.description.editable()
-            etPrice.text = product.price.toString().editable()
+            tvProductId.text = product.id.toString()
+            etProductName.text = product.name.editable()
+            etProductDescription.text = product.description.editable()
+            etProductPrice.text = product.price.toString().editable()
         }
+    }
+
+    private fun onDeleteButtonClick() {
+        presenter.eraseProduct(
+            context = requireContext(),
+            id = mBinding.tvProductId.text.toString().toLong()
+        )
     }
 
 }

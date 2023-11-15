@@ -13,8 +13,16 @@
         android:orientation="vertical"
         android:padding="@dimen/common_regular_margin">
 
+        <TextView
+            android:id="@+id/tv_product_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/id"
+            android:visibility="visible"
+            />
+
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilName"
+            android:id="@+id/til_product_name"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,14 +32,14 @@
             app:helperTextTextAppearance="@style/HelperTextStyle">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etName"
+                android:id="@+id/et_product_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDescription"
+            android:id="@+id/til_product_description"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,7 +48,7 @@
             app:startIconDrawable="@drawable/ic_description">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDescription"
+                android:id="@+id/et_product_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="4"
@@ -48,7 +56,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPrice"
+            android:id="@+id/til_product_price"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,14 +65,22 @@
             app:startIconDrawable="@drawable/ic_price">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPrice"
+                android:id="@+id/et_product_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:digits="0123456789"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_delete"
+            android:layout_gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </LinearLayout>
-
 
 </androidx.core.widget.NestedScrollView>

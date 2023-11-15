@@ -22,8 +22,7 @@ class MainActivity : AppCompatActivity(), IHomeView {
         mBinding.fab.setOnClickListener {
             goToManageProduct()
         }
-
-        presenter.loadProducts(this)
+        loadProducts()
     }
 
     override fun showProducts(products: List<Product>) {
@@ -46,7 +45,6 @@ class MainActivity : AppCompatActivity(), IHomeView {
 
     override fun goToEditProduct(id: Long) {
         val args = Bundle()
-
         args.putLong(getString(R.string.arg_id), id)
 
         val fragment = ManageProductFragment()
@@ -56,10 +54,10 @@ class MainActivity : AppCompatActivity(), IHomeView {
             .add(R.id.fragmentContainer, fragment)
             .addToBackStack(null)
             .commit()
-
+        hideFab(false)
     }
 
-    fun load(){
+    override fun loadProducts(){
         presenter.loadProducts(this)
     }
 

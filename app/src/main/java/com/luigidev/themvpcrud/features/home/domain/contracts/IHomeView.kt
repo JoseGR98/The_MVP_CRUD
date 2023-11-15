@@ -7,4 +7,5 @@ interface IHomeView {
     fun hideFab(isVisible: Boolean)
     fun goToManageProduct()
     fun goToEditProduct(id: Long)
+    fun loadProducts()
 }

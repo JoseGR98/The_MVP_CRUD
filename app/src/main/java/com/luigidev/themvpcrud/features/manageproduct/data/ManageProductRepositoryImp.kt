@@ -19,6 +19,9 @@ class ManageProductRepositoryImp : IManageProductRepository {
     ): ResultDatabase<String> =
         DatabaseHelper(context).updateProduct(product)
 
+    override fun deleteProduct(context: Context, id: Long): ResultDatabase<String> =
+        DatabaseHelper(context).deleteProduct(id)
+
     override fun getProducts(context: Context): List<Product> =
         DatabaseHelper(context).getProducts()
 

@@ -26,7 +26,11 @@ open class DatabaseHelper(context: Context) :
     //CREATE DATABASE
     override fun onCreate(db: SQLiteDatabase?) {
         val createTableQuery =
-            "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COLUMN_ID INTEGER PRIMARY KEY, $COLUMN_NAME TEXT, $COLUMN_DESCRIPTION TEXT, $COLUMN_PRICE INTEGER)"
+            "CREATE TABLE IF NOT EXISTS $TABLE_NAME (" +
+                    "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    "$COLUMN_NAME TEXT, " +
+                    "$COLUMN_DESCRIPTION TEXT, " +
+                    "$COLUMN_PRICE INTEGER)"
         db?.execSQL(createTableQuery)
     }
 
@@ -120,9 +124,16 @@ open class DatabaseHelper(context: Context) :
         //Not required at the moment
     }
 
-    //DELETE PRODUCT
-    fun deleteRegister() {
-        // * TODO * //
+    //DELETE REGISTER
+    fun deleteProduct(productId: Long): ResultDatabase<String> {
+        val writableDatabase = getWritableDatabase(PASSWORD)
+        val deletedProductId = writableDatabase.delete(
+            TABLE_NAME,
+            "$COLUMN_ID=?",
+            arrayOf(productId.toString())
+        )
+        writableDatabase.close()
+        return ResultDatabase.Success(deletedProductId.toString())
     }
 
     //DEVELOPMENT FUNCTION MODE

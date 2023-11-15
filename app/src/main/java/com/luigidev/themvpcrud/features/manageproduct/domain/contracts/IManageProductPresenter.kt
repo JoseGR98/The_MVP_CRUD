@@ -5,7 +5,8 @@ import com.luigidev.themvpcrud.core.Product
 
 interface IManageProductPresenter {
     fun saveProduct(context: Context, product: Product)
-    fun readProduct(context: Context, id: Long)
-    fun editProduct(context: Context, product: Product)
-
+    fun getProduct(context: Context, id: Long)
+    fun modifyProduct(context: Context, product: Product)
+    fun eraseProduct(context: Context, id: Long)
+    fun validateStrings(name: String, description: String, price: String): Boolean
 }
